@@ -5,6 +5,7 @@ set(srcs
     "i2c.c"
     "i2s.c"
     "ledc.c"
+    "legacy_new_driver_coexist.c"
     "pcnt.c"
     "periph_ctrl.c"
     "rmt.c"
@@ -22,7 +23,15 @@ set(srcs
     "twai.c"
     "uart.c")
 
-set(includes "include" "${target}/include")
+set(includes "include" "deprecated")
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${target}/include")
+    list(APPEND includes "${target}/include")
+endif()
+
+if(CONFIG_SOC_TEMP_SENSOR_SUPPORTED)
+    list(APPEND srcs "temperature_sensor.c"
+                     "deprecated/rtc_temperature_legacy.c")
+endif()
 
 if(${target} STREQUAL "esp32")
     # SDMMC and MCPWM are in ESP32 only.
@@ -46,7 +55,6 @@ if(IDF_TARGET STREQUAL "esp32s2")
                      "dedic_gpio.c"
                      "spi_slave_hd.c"
                      "touch_sensor_common.c"
-                     "esp32s2/rtc_tempsensor.c"
                      "esp32s2/touch_sensor.c"
                      "esp32s2/adc.c"
                      "adc.c"
@@ -77,8 +85,7 @@ if(IDF_TARGET STREQUAL "esp32c3")
                      "dedic_gpio.c"
                      "usb_serial_jtag.c"
                      "adc.c"
-                     "esp32c3/adc2_init_cal.c"
-                     "esp32c3/rtc_tempsensor.c")
+                     "esp32c3/adc2_init_cal.c")
 endif()
 
 if(IDF_TARGET STREQUAL "esp32h2")
@@ -86,8 +93,7 @@ if(IDF_TARGET STREQUAL "esp32h2")
                      "spi_slave_hd.c"
                      "adc_common.c"
                      "dedic_gpio.c"
-                     "adc.c"
-                     "esp32h2/rtc_tempsensor.c")
+                     "adc.c")
 endif()
 
 idf_component_register(SRCS "${srcs}"
