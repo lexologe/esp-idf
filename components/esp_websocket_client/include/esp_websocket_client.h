@@ -56,6 +56,7 @@ typedef struct {
     void *user_context;                     /*!< user_data context, from esp_websocket_client_config_t user_data */
     int payload_len;                        /*!< Total payload length, payloads exceeding buffer will be posted through multiple events */
     int payload_offset;                     /*!< Actual offset for the data associated with this event */
+    bool fin;                               /*!< Frame fin flag, for continuations */
 } esp_websocket_event_data_t;
 
 /**
